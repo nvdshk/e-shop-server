@@ -92,7 +92,8 @@ const productContoller = {
       next(error)
     }
 
-    const { name, image, size, price, description, categories } = req.body
+    const { name, image, size, price, description, categories, features } =
+      req.body
     const productId = req.params.id
     try {
       const response = await Product.findByIdAndUpdate(productId, {
@@ -102,6 +103,7 @@ const productContoller = {
         size,
         description,
         categories,
+        features,
       })
       return res.status(200).json({
         success: true,
