@@ -1,6 +1,6 @@
 import express, { Application } from 'express'
 import { Server } from 'http'
-import { APP_PORT, DB_URL } from './config'
+import { APP_PORT, BASE_URL, DB_URL } from './config'
 import errorHandler from './middlewares/errorHandler'
 import userRouter from './routes/userRouter'
 import { connect, connection } from 'mongoose'
@@ -40,7 +40,7 @@ app.use(
 )
 // app.use(cors())
 // cors => cross orgin resource sharing
-app.use(cors({ origin: ['http://localhost:3000'], credentials: true }))
+app.use(cors({ origin: [BASE_URL as string], credentials: true }))
 
 app.use('/api', fileRouter)
 app.use('/api', userRouter)
