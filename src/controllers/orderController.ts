@@ -114,6 +114,25 @@ const orderController = {
       next(error)
     }
   },
+  async findAllOrders(req: Request, res: Response, next: NextFunction) {
+    try {
+      const response = await Order.find()
+        .populate({
+          path: 'user',
+          select: '-_id name email',
+        })
+        .populate({
+          path: 'items',
+          populate: {
+            path: 'product',
+            select: '_id name image color price size',
+          },
+        })
+      res.status(200).json({ success: true, data: response })
+    } catch (error) {
+      next(error)
+    }
+  },
 
   async findOne(req: Request, res: Response, next: NextFunction) {
     try {

@@ -16,6 +16,7 @@ import initializeFirebaseSDK from './startup/firebaseConfig'
 import deviceRouter from './routes/deviceRouter'
 import notificationRouter from './routes/notificationRouter'
 import paymentRouter from './routes/paymentRouter'
+import settingRouter from './routes/settingRouter'
 
 initializeFirebaseSDK()
 
@@ -52,6 +53,7 @@ app.use('/api', addressRouter)
 app.use('/api', deviceRouter)
 app.use('/api', notificationRouter)
 app.use('/api', paymentRouter)
+app.use('/api', settingRouter)
 app.use(errorHandler)
 
 const port = process.env.PORT || Number(APP_PORT)
