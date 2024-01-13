@@ -8,7 +8,7 @@ const notificationRouter = express.Router()
 notificationRouter.get('/notifications', auth, notificationController.findAll)
 notificationRouter.post(
   '/notifications/send-to-all',
-
+  [auth, admin],
   notificationController.sendToAllNotifcation
 )
 
