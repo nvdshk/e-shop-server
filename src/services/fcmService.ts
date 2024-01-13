@@ -53,4 +53,89 @@ const sendPushNotification = async (
   await notification.save()
 }
 
+export const sendToAllPushNotification = async (
+  fcmTokens: string[],
+  title: string,
+  body: string,
+  image: string
+) => {
+  const notificationData = {
+    message: {
+      notification: {
+        title: title,
+        body: body,
+        image: image,
+      },
+      tokens: fcmTokens,
+    },
+
+    sent: false,
+    error: '',
+    date: new Date(),
+  }
+
+  if (fcmTokens.length === 0) {
+    notificationData.error = 'No tokens found'
+  } else {
+    try {
+      console.log('send notification')
+      const response = await firebase
+        .messaging()
+        .sendEachForMulticast(notificationData.message)
+
+      notificationData.sent = true
+
+      // remove all expired tokens from db.
+      //    const failedTokens = response.results
+      //    .map((r, i) => r.error && tokens[i])
+      //    .filter(r => r);
+      //  await Devices.deleteMany({ token: { $in: failedTokens } });
+    } catch (error: any) {
+      notificationData.error = error.message
+    }
+  }
+
+  const notification = new Notification(notificationData)
+  await notification.save()
+}
+
+export const sendTopicPushNotification = async (
+  title: string,
+  body: string,
+  image: string
+) => {
+  const topic = 'all'
+
+  const notificationData = {
+    message: {
+      notification: {
+        title: title,
+        body: body,
+      },
+    },
+    topic: topic,
+    sent: false,
+    error: '',
+    date: new Date(),
+  }
+
+  try {
+    const response = await firebase
+      .messaging()
+      .sendToTopic(notificationData.topic, notificationData.message)
+    notificationData.sent = true
+
+    // remove all expired tokens from db.
+    //    const failedTokens = response.results
+    //    .map((r, i) => r.error && tokens[i])
+    //    .filter(r => r);
+    //  await Devices.deleteMany({ token: { $in: failedTokens } });
+  } catch (error: any) {
+    notificationData.error = error.message
+  }
+
+  const notification = new Notification(notificationData)
+  await notification.save()
+}
+
 export default sendPushNotification
