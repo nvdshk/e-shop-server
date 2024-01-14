@@ -114,7 +114,7 @@ const orderController = {
       next(error)
     }
   },
-  async findAllOrders(req: Request, res: Response, next: NextFunction) {
+  async findAll(req: Request, res: Response, next: NextFunction) {
     try {
       const response = await Order.find()
         .populate({
@@ -136,13 +136,18 @@ const orderController = {
 
   async findOne(req: Request, res: Response, next: NextFunction) {
     try {
-      const response = await Order.findOne({ _id: req.params.id }).populate({
-        path: 'items',
-        populate: {
-          path: 'product',
-          select: '_id name image color price size',
-        },
-      })
+      const response = await Order.findOne({ _id: req.params.id })
+        .populate({
+          path: 'user',
+          select: '-_id name email',
+        })
+        .populate({
+          path: 'items',
+          populate: {
+            path: 'product',
+            select: '_id name image color price size',
+          },
+        })
       res.status(200).json({ success: true, data: response })
     } catch (error) {
       next(error)
@@ -163,14 +168,37 @@ const orderController = {
     const orderStatusId = req.params.statusId
 
     try {
+      const order: any = await Order.findOne({ _id: req.params.id })
+      if (!order) {
+        return
+      }
+
+      const orderStatus = order.orderStatus
+
+      const itemIndex = orderStatus.findIndex(
+        (item: any) => (item._id as string) == orderStatusId
+      )
+
+      const newOrderStatusArray = order.orderStatus
+
+      console.log(`itemIndex ${itemIndex}`)
+
+      orderStatus.forEach((item: any, index: number) => {
+        if (index <= itemIndex) {
+          if (orderStatus[index].isCompleted !== true) {
+            newOrderStatusArray[index].isCompleted = true
+            newOrderStatusArray[index].date = new Date()
+          }
+        } else if (orderStatus[index].type !== 'ordered') {
+          newOrderStatusArray[index].isCompleted = false
+          newOrderStatusArray[index].date = ''
+        }
+      })
+
       const response = await Order.findOneAndUpdate(
         { _id: orderId, 'orderStatus._id': orderStatusId },
-        {
-          $set: {
-            'orderStatus.$.date': new Date(),
-            'orderStatus.$.isCompleted': true,
-          },
-        }
+
+        { $set: { orderStatus: newOrderStatusArray } }
       )
 
       return res.status(200).json({ success: true })

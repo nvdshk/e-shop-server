@@ -15,6 +15,6 @@ orderRouter.put(
   [auth, admin],
   orderController.updateOrderStatus
 )
-orderRouter.get('/orders', [auth, admin], orderController.findAllOrders)
+orderRouter.get('/orders', [auth, admin], orderController.findAll)
 
 export default orderRouter
