@@ -6,6 +6,13 @@ import admin from '../middlewares/admin'
 const notificationRouter = express.Router()
 
 notificationRouter.get('/notifications', auth, notificationController.findAll)
+
+notificationRouter.get(
+  '/notifications/all',
+  [auth, admin],
+  notificationController.findAllByAdmin
+)
+
 notificationRouter.post(
   '/notifications/send-to-all',
   [auth, admin],

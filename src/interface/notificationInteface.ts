@@ -5,6 +5,7 @@ export interface INotification {
     notification: {
       title: string
       body: string
+      image?: string
     }
     token?: string
     tokens: [string]

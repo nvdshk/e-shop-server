@@ -6,6 +6,7 @@ const notificationSchema = new Schema<INotification>({
     notification: {
       title: { type: String, required: true },
       body: { type: String, required: true },
+      image: { type: String },
     },
     token: { type: String },
     tokens: { type: [String] },
