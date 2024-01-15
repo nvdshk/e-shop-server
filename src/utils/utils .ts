@@ -4,10 +4,14 @@ import Cart from '../models/Cart'
 import Order from '../models/Order'
 import Payment from '../models/Payment'
 import Product from '../models/Product'
+import Setting from '../models/Setting'
 import Address from '../models/address'
 import Device from '../models/device'
+import CustomErrorHandler from '../services/CustomErrorHandler'
 import sendPushNotification from '../services/fcmService'
 import mongoose from 'mongoose'
+import { NextFunction } from 'express'
+import { ISetting } from '../interface/settingInteface'
 
 const utils = {
   async createOrder(
@@ -131,6 +135,20 @@ const utils = {
   async getCartItems(userId: string): Promise<ICart | null> {
     const userCart: ICart | null = await Cart.findOne({ userId: userId })
     return userCart
+  },
+
+  async checkIsStoreSettingsExist(
+    settings: Array<ISetting>,
+    next: NextFunction
+  ) {
+    if (!settings) {
+      return next(CustomErrorHandler.invalidError())
+    }
+    if (settings.length === 0) {
+      return next(
+        CustomErrorHandler.invalidError('Please setup the store first')
+      )
+    }
   },
 }
 

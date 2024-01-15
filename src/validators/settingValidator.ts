@@ -6,9 +6,12 @@ const storeSchema = Joi.object({
   contactNo: Joi.string().required(),
   address: Joi.string().required(),
 })
-const settingSchema = Joi.object({
-  store: storeSchema,
-  currency: Joi.string().required(),
+
+export const currencySchema = Joi.object({
+  name: Joi.string().required(),
+  symbol: Joi.string().required(),
+  code: Joi.string().required(),
+  exchangeRate: Joi.string().required(),
 })
 
-export default settingSchema
+export default storeSchema
