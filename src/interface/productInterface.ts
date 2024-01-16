@@ -9,6 +9,7 @@ export interface IProduct extends Document {
   images: [string]
   features: [string]
   stock: number
+  tax: number
   categories: []
   createdBy: mongoose.Schema.Types.ObjectId
 }

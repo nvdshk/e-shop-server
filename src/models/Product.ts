@@ -12,6 +12,7 @@ const productSchema = new Schema<IProduct>(
     features: [{ type: String, required: true }],
     images: [String],
     stock: { type: Number, required: true },
+    tax: { type: Number, required: true },
     categories: [{ type: mongoose.Schema.Types.ObjectId, required: true }],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },

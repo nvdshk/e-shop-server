@@ -10,6 +10,7 @@ const productSchema = Joi.object({
   features: Joi.array().items(Joi.string()).required(),
   images: Joi.array().items(Joi.string()),
   stock: Joi.number().required(),
+  tax: Joi.number().required(),
   categories: Joi.array().required(),
 })
 
