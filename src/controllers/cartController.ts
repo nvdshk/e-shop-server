@@ -4,6 +4,7 @@ import { IItem } from '../interface/cartInterface'
 import Cart from '../models/Cart'
 import Product from '../models/Product'
 import CustomErrorHandler from '../services/CustomErrorHandler'
+import utils from '../utils/utils '
 
 const cartController = {
   async findAll(req: Request, res: Response, next: NextFunction) {
@@ -40,6 +41,8 @@ const cartController = {
       if (!product) {
         return next(CustomErrorHandler.notFound())
       }
+      const taxRate = product.tax
+
       //--If Cart Exists ----
       if (cart) {
         //---- Check if index exists ----
@@ -54,14 +57,30 @@ const cartController = {
           cart.items[indexFound].total =
             cart.items[indexFound].quantity * product.price
           cart.items[indexFound].price = product.price
+
+          const taxExcludeTotal =
+            product.price * cart.items[indexFound].quantity
+          const taxIncludeTotal = utils.calculateTaxAmount(
+            taxRate,
+            taxExcludeTotal
+          )
+          cart.items[indexFound].taxIncludeTotal =
+            taxExcludeTotal + taxIncludeTotal
         }
         //----Check if quantity is greater than 0 then add item to items array ----
         else if (quantity > 0) {
+          const taxExcludeTotal = product.price * quantity
+          const taxIncludeTotal = utils.calculateTaxAmount(
+            taxRate,
+            taxExcludeTotal
+          )
+
           cart.items.push({
             product: productId,
             quantity: quantity,
             price: product.price,
             total: product.price * quantity,
+            taxIncludeTotal: taxExcludeTotal + taxIncludeTotal,
           } as IItem)
         }
         //----If quantity of price is 0 throw the error -------
@@ -70,6 +89,7 @@ const cartController = {
             message: 'Invalid request',
           })
         }
+
         const response = await cart.save()
         const populatedCart = await response.populate({
           path: 'items',
@@ -84,7 +104,13 @@ const cartController = {
           data: populatedCart,
         })
       } else {
+        const taxExcludeTotal = product.price * quantity
+        const taxIncludeTotal = utils.calculateTaxAmount(
+          taxRate,
+          taxExcludeTotal
+        )
         //------------ This creates a new cart and then adds the item to the cart that has been created------------
+
         const response = await Cart.create({
           userId: userId,
           items: [
@@ -93,6 +119,7 @@ const cartController = {
               quantity: quantity,
               price: product.price,
               total: product.price * quantity,
+              taxIncludeTotal: taxExcludeTotal + taxIncludeTotal,
             },
           ],
         })

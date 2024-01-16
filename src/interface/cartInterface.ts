@@ -10,4 +10,5 @@ export interface IItem extends Document {
   quantity: number
   price: number
   total: number
+  taxIncludeTotal: number
 }

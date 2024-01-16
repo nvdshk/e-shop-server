@@ -11,6 +11,7 @@ const itemSchema = new Schema<IItem>(
     quantity: { type: Number, default: 1 },
     price: { type: Number, required: true },
     total: { type: Number, required: true },
+    taxIncludeTotal: { type: Number, required: true },
   },
   { timestamps: true }
 )

@@ -122,11 +122,15 @@ const utils = {
     return await payment.save()
   },
 
-  getOrderAmount(cart: ICart): number {
+  getOrderAmount(cart: ICart, includeTax?: boolean): number {
     let totalAmount = 0
 
     cart.items.forEach((item) => {
-      totalAmount += item.total
+      if (includeTax) {
+        totalAmount += item.taxIncludeTotal
+      } else {
+        totalAmount += item.total
+      }
     })
 
     return totalAmount
@@ -149,6 +153,10 @@ const utils = {
         CustomErrorHandler.invalidError('Please setup the store first')
       )
     }
+  },
+
+  calculateTaxAmount(taxRate: number, taxExcludeAmount: number): number {
+    return (taxExcludeAmount * taxRate) / 100
   },
 }
 

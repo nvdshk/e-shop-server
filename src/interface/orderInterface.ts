@@ -7,6 +7,7 @@ export interface IOrder extends Document {
   address: IAddressItem
   items: [IItem]
   totalAmount: number
+  taxIncludeTotalAmount: number
   paymentType: string
   paymentStatus: string
   payment?: mongoose.Schema.Types.ObjectId

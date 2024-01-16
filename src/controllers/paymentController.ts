@@ -15,7 +15,7 @@ const paymentController = {
 
     try {
       const userCart = await utils.getCartItems(userId)
-      const amount = utils.getOrderAmount(userCart!)
+      const amount = utils.getOrderAmount(userCart!, true)
       if (!amount || amount <= 0) {
         return next(CustomErrorHandler.invalidError('Invalid amount'))
       }

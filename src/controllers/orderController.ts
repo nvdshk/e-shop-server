@@ -39,9 +39,11 @@ const orderController = {
       }
 
       let totalAmount = 0
+      let taxIncludeTotalAmount = 0
 
       userCart.items.forEach((item) => {
         totalAmount += item.total
+        taxIncludeTotalAmount += item.taxIncludeTotal
       })
 
       const oderStatus = [
@@ -68,6 +70,7 @@ const orderController = {
         address: shippingAddress,
         items: userCart.items,
         totalAmount: totalAmount,
+        taxIncludeTotalAmount: taxIncludeTotalAmount,
         paymentType: paymentType,
         orderStatus: oderStatus,
       })
@@ -125,7 +128,7 @@ const orderController = {
           path: 'items',
           populate: {
             path: 'product',
-            select: '_id name image color price size',
+            select: '_id name image color price size tax',
           },
         })
       res.status(200).json({ success: true, data: response })
@@ -145,7 +148,7 @@ const orderController = {
           path: 'items',
           populate: {
             path: 'product',
-            select: '_id name image color price size',
+            select: '_id name image color price size tax',
           },
         })
       res.status(200).json({ success: true, data: response })
@@ -180,8 +183,6 @@ const orderController = {
       )
 
       const newOrderStatusArray = order.orderStatus
-
-      console.log(`itemIndex ${itemIndex}`)
 
       orderStatus.forEach((item: any, index: number) => {
         if (index <= itemIndex) {

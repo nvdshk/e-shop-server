@@ -80,6 +80,10 @@ const orderSchema = new mongoose.Schema<IOrder>(
       type: Number,
       required: true,
     },
+    taxIncludeTotalAmount: {
+      type: Number,
+      required: true,
+    },
     paymentType: {
       type: String,
       enum: ['cod', 'card', 'razorpay', 'stripe'],
