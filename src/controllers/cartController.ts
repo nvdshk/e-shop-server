@@ -58,8 +58,7 @@ const cartController = {
             cart.items[indexFound].quantity * product.price
           cart.items[indexFound].price = product.price
 
-          const taxExcludeTotal =
-            product.price * cart.items[indexFound].quantity
+          const taxExcludeTotal = cart.items[indexFound].total
           const taxIncludeTotal = utils.calculateTaxAmount(
             taxRate,
             taxExcludeTotal
@@ -150,11 +149,11 @@ const cartController = {
       const product = await Product.findById({ _id: productId })
 
       if (!product) {
-        return next(CustomErrorHandler.notFound())
+        return next(CustomErrorHandler.notFound('Product not found!'))
       }
 
       if (!cart) {
-        return next(CustomErrorHandler.notFound())
+        return next(CustomErrorHandler.notFound('Cart not found'))
       }
       const indexFound = cart.items.findIndex(
         (item) => item.product == productId
@@ -173,6 +172,11 @@ const cartController = {
         })
       }
 
+      const taxRate = product.tax
+      const taxExcludeTotal = product.price * quantity
+      const taxIncludeTotal =
+        taxExcludeTotal + utils.calculateTaxAmount(taxRate, taxExcludeTotal)
+
       const response = Cart.findOneAndUpdate(
         {
           userId: userId,
@@ -184,6 +188,9 @@ const cartController = {
             'items.$.total': isIncrement
               ? product.price * quantity
               : -(product.price * quantity),
+            'items.$.taxIncludeTotal': isIncrement
+              ? taxIncludeTotal
+              : -taxIncludeTotal,
           },
         },
         {
